@@ -7,5 +7,4 @@
 zed/prompts/
 zed/conversations/
 zed/db/
-zed/extensions/
 *.mdb

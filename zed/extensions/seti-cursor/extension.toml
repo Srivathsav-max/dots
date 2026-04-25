@@ -1,0 +1,13 @@
+id = "seti-cursor"
+name = "Seti (Cursor)"
+version = "0.1.0"
+schema_version = 1
+description = "Seti file icons ported from Cursor.app's bundled vs-seti-icon-theme. 383 icons, faithful colors."
+authors = ["Jaya Raj Srivathsav Adari"]
+repository = "https://github.com/Srivathsav-max/dots"
+icon_themes = ["icon_themes/seti-cursor.json"]
+themes = []
+languages = []
+grammars = []
+
+[lib]
