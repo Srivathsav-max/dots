@@ -1,0 +1,11 @@
+.DS_Store
+*.swp
+*.bak
+*.backup.*
+
+# Zed runtime data (not config)
+zed/prompts/
+zed/conversations/
+zed/db/
+zed/extensions/
+*.mdb
