@@ -1,0 +1,12 @@
+[
+  {
+    "key": "cmd+shift+t",
+    "command": "workbench.action.terminal.openNativeConsole"
+  },
+  {
+    "key": "cmd+alt+t",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "ghostty-here \"$PWD\"\n" },
+    "when": "terminalFocus"
+  }
+]

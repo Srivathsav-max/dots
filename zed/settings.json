@@ -49,4 +49,12 @@
     "light": "One Dark",
     "dark": "Cursor Dark Anysphere"
   },
+  "terminal": {
+    "font_family": "JetBrainsMono Nerd Font Mono",
+    "font_size": 14,
+    "shell": { "program": "zsh" },
+    "env": {
+      "TERM": "xterm-256color"
+    }
+  }
 }

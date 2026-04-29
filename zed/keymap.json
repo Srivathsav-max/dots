@@ -4,7 +4,20 @@
     "bindings": {
       "shift-enter": [
         "terminal::SendText",
-        "\u001b\r"
+        "\r"
+      ]
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-shift-t": [
+        "task::Spawn",
+        { "task_name": "Open Ghostty (project root)" }
+      ],
+      "cmd-alt-t": [
+        "task::Spawn",
+        { "task_name": "Open Ghostty (current file dir)" }
       ]
     }
   }

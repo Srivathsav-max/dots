@@ -1,0 +1,16 @@
+{
+  "window.commandCenter": true,
+
+  // Integrated terminal — match Ghostty look
+  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font Mono",
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.profiles.osx": {
+    "zsh": { "path": "/bin/zsh", "args": ["-l"] }
+  },
+
+  // External terminal — best-effort. Microsoft/vscode#284265 hardcodes the
+  // supported list and excludes Ghostty, so this may fall back to Terminal.app.
+  // The cmd+shift+t keybind below uses ghostty-here as a reliable workaround.
+  "terminal.external.osxExec": "/Applications/Ghostty.app"
+}

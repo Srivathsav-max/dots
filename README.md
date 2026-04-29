@@ -1,22 +1,25 @@
 # dots
 
-Personal dotfiles. Symlink-based — clone, run `install.sh`, restart the app.
+Personal dotfiles for macOS. Symlink-based — clone, run `install.sh`, restart the affected apps.
 
 ## Layout
 
 ```
 dots/
-├── zed/
-│   ├── settings.json
-│   ├── keymap.json
-│   ├── themes/
-│   │   └── cursor-dark-anysphere.json   # faithful port of Cursor.app's "Cursor Dark Anysphere v0.0.3"
-│   └── extensions/
-│       └── seti-cursor/                 # Seti icon theme ported from Cursor.app (383 SVGs, 501 ext mappings)
+├── nvim/                  # Neovim config (Lua, lazy.nvim) — derived from thdxr/environment, customized
+├── ghostty/               # Ghostty terminal config
+├── zed/                   # Zed editor config + Cursor Dark Anysphere theme + Seti icon theme
+├── cursor/                # Cursor.app settings + keybindings
+├── windsurf/              # Windsurf settings + keybindings
+├── antigravity/           # Antigravity settings + keybindings
+├── bin/
+│   └── ghostty-here       # opens Ghostty in a given dir; used by VSCode-fork keybinds
+├── zsh/
+│   └── starship.zsh       # appended to ~/.zshrc; loads starship + adds ~/bin to PATH
+├── terminal-app/
+│   └── set-font.applescript  # one-shot script to set Nerd Font across all Terminal.app profiles
 └── install.sh
 ```
-
-Add new tools as siblings to `zed/` (e.g. `nvim/`, `ghostty/`, `git/`) and extend `install.sh` with a new `link` line.
 
 ## Setup
 
@@ -26,19 +29,63 @@ cd ~/dots
 ./install.sh
 ```
 
-`install.sh` symlinks each tracked file into the right place under `~/.config/`. If a file already exists at the destination, it's moved to `<file>.backup.<timestamp>` first — nothing gets silently overwritten.
+`install.sh` symlinks each tracked file into the right place under `~/.config/` and `~/Library/Application Support/`. If a file already exists at the destination, it's moved to `<file>.backup.<timestamp>` first — nothing gets silently overwritten.
+
+### Prereqs
+
+```sh
+brew install neovim ripgrep fd lazygit fzf starship stow
+brew install --cask ghostty font-jetbrains-mono-nerd-font font-symbols-only-nerd-font
+```
 
 ## What's included
 
-### Zed
+### Neovim (`nvim/`)
+Started from [thdxr/environment](https://github.com/thdxr/environment) and customized:
 
-- **Cursor Dark Anysphere theme** — translated from the Cursor.app bundle (`/Applications/Cursor.app/Contents/Resources/app/extensions/theme-cursor/themes/cursor-dark-color-theme.json`). All workbench colors mapped 1:1 against Zed's v0.2.0 schema; alpha-channel text colors pre-blended against the editor background to avoid Zed's brighter-than-Cursor text rendering.
-- **Seti (Cursor) icon theme** — Cursor ships Seti icons as a single `.woff` font with 385 glyphs, but Zed icon themes need individual SVGs. The 383 glyphs were extracted with `fontTools` (each glyph drawn through `SVGPathPen` and emitted as a standalone SVG with its Seti color baked in). Seti's `languageIds` mapping was flattened to per-extension entries by scanning every `package.json` in `Cursor.app/Contents/Resources/app/extensions/` for `contributes.languages`. Final coverage: 192 file icons, 501 extension mappings, 170 filename-stem mappings. Folder and chevron icons added (Seti doesn't ship them — VS Code paints its own).
-- **Editor font** — Menlo 14, matching Cursor's macOS default (so font weight and metrics line up between the two editors).
+- `lazy.nvim` plugin manager, ~38 plugins.
+- LSP via Mason (TypeScript/vtsls, Lua, Python, Rust, ESLint, HTML, CSS, Tailwind, JSON, YAML, Bash, Markdown, Docker, Prisma, GraphQL — gopls is opt-in).
+- Migrated from deprecated `require("lspconfig")` framework to `vim.lsp.config` / `vim.lsp.enable` (Neovim 0.11+).
+- Treesitter, telescope, harpoon, conform.
+- Fuzzy AI: Supermaven (free tier) + Avante.nvim + gp.nvim.
+- Git: gitsigns (inline hunks/blame), lazygit (full TUI), diffview, fugitive, neogit.
+- Floating terminal via toggleterm (`<leader>tt`, `<leader>th`, `<leader>tv`, `<C-\>`).
+- nvim-tree pinned to the left as a 36-col sidebar, opens automatically on startup.
+- Window navigation: `<C-h>` / `<C-l>` move between windows; `<leader>w` is the `<C-w>` prefix.
+- Tokyonight (night) theme.
 
-To switch to the Seti icon theme after install: open Zed settings and set `"icon_theme": "Seti (Cursor)"`.
+Leader is `<Space>`. See `nvim/lua/plugins/*.lua` for the full keymap surface.
 
-### Not tracked
+### Ghostty (`ghostty/`)
+- Tokyonight theme.
+- `JetBrainsMono Nerd Font Mono` with `Symbols Nerd Font Mono` as glyph fallback.
+- Native macOS title bar + tab bar (`window-decoration = true`, `macos-titlebar-style = tabs`).
+- `macos-non-native-fullscreen = true`, `window-save-state = always`.
+- `ctrl+n`, `ctrl+e`, `ctrl+p`, `ctrl+w`, `ctrl+h`, `ctrl+l` unbound so nvim receives them.
 
-- `zed/prompts/` (LMDB runtime data)
-- `zed/extensions/`, `zed/db/`, `zed/conversations/` (local state)
+### Zed (`zed/`)
+- **Cursor Dark Anysphere theme** — translated from Cursor.app's bundle. All workbench colors mapped 1:1 against Zed's v0.2.0 schema; alpha-channel text colors pre-blended against the editor background.
+- **Seti (Cursor) icon theme** — Seti glyphs extracted from Cursor.app's `.woff` bundle into individual SVGs (each glyph drawn through fontTools' `SVGPathPen`). Coverage: 192 file icons, 501 extension mappings, 170 filename-stem mappings.
+- **`Cmd+Shift+T` / `Cmd+Alt+T`** — open Ghostty in project root / current file's dir via `tasks.json`.
+- Integrated terminal uses `JetBrainsMono Nerd Font Mono`.
+
+### VSCode-fork editors (`cursor/`, `windsurf/`, `antigravity/`)
+Same config in each:
+- Integrated terminal: `JetBrainsMono Nerd Font Mono`.
+- `terminal.external.osxExec` set to Ghostty (best-effort — VSCode hardcodes its supported list, so this often falls back to Terminal.app — see microsoft/vscode#284265).
+- **`Cmd+Shift+T`** — try external terminal (uses Ghostty if the fork respects osxExec).
+- **`Cmd+Alt+T`** — when integrated terminal is focused, types `ghostty-here "$PWD"` and runs it. Always works.
+
+### Helper scripts (`bin/`)
+- `ghostty-here [dir]` — `open -na Ghostty --args --working-directory="$dir"`. Used by all editor keybinds.
+
+### Shell (`zsh/`)
+- `starship.zsh` is sourced from `~/.zshrc` (the install script appends the line). Adds `~/bin` to PATH and inits Starship.
+
+### Terminal.app (`terminal-app/`)
+- `set-font.applescript` iterates every settings set in Terminal.app and sets the font to `JetBrainsMonoNFM-Regular` at 14pt. Run via `osascript`.
+
+## Not tracked
+
+- `zed/prompts/`, `zed/conversations/`, `zed/db/` (LMDB runtime data)
+- `nvim/lazy-lock.json` is tracked for reproducibility; delete it locally and run `:Lazy sync` if you want to update everything to the latest.

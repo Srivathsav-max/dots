@@ -1,0 +1,20 @@
+[
+  {
+    "label": "Open Ghostty (project root)",
+    "command": "/usr/bin/open",
+    "args": ["-na", "Ghostty", "--args", "--working-directory=$ZED_WORKTREE_ROOT"],
+    "reveal": "never",
+    "hide": "always",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": true
+  },
+  {
+    "label": "Open Ghostty (current file dir)",
+    "command": "/usr/bin/open",
+    "args": ["-na", "Ghostty", "--args", "--working-directory=$ZED_DIRNAME"],
+    "reveal": "never",
+    "hide": "always",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": true
+  }
+]

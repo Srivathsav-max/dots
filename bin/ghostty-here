@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Open a new Ghostty window cd'd into the given dir (or cwd if none)
+target="${1:-$PWD}"
+exec /usr/bin/open -na Ghostty --args --working-directory="$target"
